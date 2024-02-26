@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>VIN Checker</title>
+  <script>
+    // Define your VIN digit list here
+    var vinDigitList = {
+      "3": {
+        "3": "Model 3", "S": "Model S",
+        "X": "Model X", "Y": "Model Y"
+      },
+      "10": {
+        "A": "Austin, Texas", "F": "Fremont, California",
+        "B": "Berlin, Germany", "C": "Shanghai, China"
+      },
+      "7": {
+        "5": "P2 Dual Motor", "6": "P2 Tri Motor",
+        "A": "Single Motor - Standard / Performance", "B": "Dual Motor - Standard",
+        "C": "Dual Motor - Performance", "D": "Single Motor - Standard / Performance",
+        "E": "Dual Motor - Standard", "F": "Dual Motor - Performance",
+      },
+      "6": {
+        "E": "Electric", "F": "Electric - Lithium Iron Phosphate Battery"
+      },
+      "9": {
+        "6": "2006", "7": "2007",
+        "8": "2008", "9": "2009",
+        "A": "2010", "B": "2011",
+        "C": "2012", "D": "2013",
+        "E": "2014", "F": "2015",
+        "G": "2016", "H": "2017",
+        "J": "2018", "K": "2019",
+        "L": "2020", "M": "2021",
+        "N": "2022", "P": "2023",
+        "R": "2024", "S": "2025",
+        "T": "2026", "v": "2027",
+        "w": "2028", "Wx": "2029",
+        "y": "2030"
+      }
+
+      // Add more positions as needed
+    };
+
+    // Define your VIN prefix list here
+    var vinPrefixList = {
+      "5YJ": "Fremont (Until 2021)",
+      "7SA": "Fremont/Austin (From 2022)",
+      "LRW": "Shanghai",
+      "XP7": "Berlin",
+      // Add more prefixes as needed
+    };
+
+    var customLabels = {
+      "3": "Tesla",
+      "10": "Manufacturing Location",
+      "7": "Drive Unit",
+      "6": "Battery Type",
+      "9": "Model Year"
+    }
+
+    function checkVin() {
+      var vin = document.getElementById('vin').value;
+      if (vin !== vin.toUpperCase()) {
+        document.getElementById('result').innerText = "Error: VIN must be in uppercase.";
+        return;
+      }
+      if (vin.length != 17) {
+        document.getElementById('result').innerText = "Error: VIN must be 17 digits.";
+        return;
+      }
+      var result = "";
+      var prefix = vin.substring(0, 3);
+      var prefixInfo = vinPrefixList[prefix];
+      if (prefixInfo) {
+        result += "Prefix: " + prefixInfo + " (" + prefix + ")\n";
+      } else {
+        result += "Prefix: No info available (" + prefix + ")\n";
+      }
+      for (var i = 3; i < vin.length - 6; i++) {
+        if (i === 4 || i === 5 || i === 8) continue;
+        var digit = vin[i];
+        var digitInfo = vinDigitList[String(i)] ? vinDigitList[String(i)][digit] : undefined;
+        var label = customLabels[String(i)] ? customLabels[String(i)] : "Digit " + (i + 1);
+        if (digitInfo) {
+          result += label + ": "+ digitInfo + " (" + digit + ")\n";
+        } else {
+          result += label + ": " + "No info available (" + digit + ")\n";
+        }
+      }
+      document.getElementById('result').innerText = result;
+    }
+  </script>
+</head>
+
+<body>
+  <h1>VIN Checker</h1>
+  <input type="text" id="vin" placeholder="Enter VIN">
+  <button onclick="checkVin()">Check</button>
+  <pre id="result"></pre>
+</body>
+
+</html>
